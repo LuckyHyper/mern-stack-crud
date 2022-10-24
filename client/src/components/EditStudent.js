@@ -1,26 +1,36 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import AppContainer from "./AppContainer";
 import axios from "axios";
 
-function AddStudent() {
+function EditStudent() {
+  const location = useLocation();
+  const studentId = location.state?.id;
   const navigate = useNavigate();
   const [student, setStudent] = useState({
     Firstname: "",
     Lastname: "",
     Email: "",
     Phone: "",
-    error_list: [],
   });
+  useEffect(() => {
+    axios
+      .get(`/api/students?id=` + studentId)
+      .then((res) => {
+        console.log(res.data);
+        setStudent(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleInput = (e) => {
     setStudent({ ...student, [e.target.name]: e.target.value });
   };
 
-  const AddSubmit = (e) => {
+  const saveModification = (e) => {
     e.preventDefault();
     axios
-      .post("/api/student", student)
+      .put("/api/student?id=" + studentId, student)
       .then((res) => {
         navigate("/");
       })
@@ -28,8 +38,8 @@ function AddStudent() {
   };
 
   return (
-    <AppContainer title="Add Student">
-      <form onSubmit={AddSubmit}>
+    <AppContainer title="Edit Student">
+      <form onSubmit={saveModification}>
         <div className="form-grouh3 mt-3">
           <h6>Firstname</h6>
           <input
@@ -72,7 +82,7 @@ function AddStudent() {
         </div>
 
         <div className=" btn-back">
-          <button className="btn btn-warning mt-2 px-5">Add</button>
+          <button className="btn btn-warning mt-2 px-5">Edit</button>
         </div>
         <div className=" btn-back">
           <Link to="/" type="button" className="btn btn-dark mt-2 px-5">
@@ -84,4 +94,4 @@ function AddStudent() {
   );
 }
 
-export default AddStudent;
+export default EditStudent;

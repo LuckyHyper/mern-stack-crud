@@ -1,46 +1,64 @@
-import React from "react";
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AppContainer from "./AppContainer";
+import RowDetails from "./RowDetails";
+import axios from "axios";
 
-function Home() { 
+function MainPage() {
+  const [data, setData] = useState();
+  const [reload, setReload] = useState(0);
+  let ignore = false;
 
-        return (
-            <AppContainer title="Student List">
-                <div class="table-responsive">
+  useEffect(() => {
+    axios
+      .get(`/api/students`)
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, [reload]);
 
-                    <Link to={'add-student'} className="btn btn-dark  float-end"> Add Student</Link>
-                    <br></br>
-                    <br></br>
+  return (
+    <AppContainer title="Student List">
+      <div className="table-responsive">
+        <Link to={"add-student"} className="btn btn-dark  float-end">
+          Add Student
+        </Link>
+        <br></br>
+        <br></br>
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Class</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Phone</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdmmmo</td>
-                                <td>@mdo</td>
-                                <td>
-                                    <Link to="/edit-student" type="button" class="btn btn-warning btn-css">Edit</Link>
-                                    <Link to="/edit-student" type="button" class="btn btn-secondary btn-css">Delete</Link>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </AppContainer>
-        );
-    
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">#ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Class</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data != undefined &&
+              data.map((item, key) => {
+                return (
+                  <RowDetails
+                    key={item._id}
+                    id={item._id}
+                    firstname={item.Firstname}
+                    lastname={item.Lastname}
+                    email={item.Email}
+                    phone={item.Phone}
+                    setReload={setReload}
+                    reload={reload}
+                  />
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
+    </AppContainer>
+  );
 }
-export default Home;
+export default MainPage;

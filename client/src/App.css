@@ -2,9 +2,17 @@
   text-align: center;
 }
 
+.form-control {
+  text-align: center;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.table {
+  margin-top: 3rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {
